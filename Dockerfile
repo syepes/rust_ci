@@ -1,13 +1,10 @@
 FROM --platform=$BUILDPLATFORM rust:latest as builder
 WORKDIR /app
 
-RUN cargo install cargo-build-deps
-
 COPY ./Cargo.toml .
 COPY ./Cargo.lock .
 COPY ./src src
 
-RUN cargo build-deps --release
 RUN cargo build --release --verbose
 
 FROM debian:buster-slim
