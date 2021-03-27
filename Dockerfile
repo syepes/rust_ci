@@ -4,4 +4,5 @@ ADD target/*/release/rust_ci /rust_ci
 
 WORKDIR /
 
+ENV RUST_BACKTRACE=true
 CMD ["/rust_ci"]

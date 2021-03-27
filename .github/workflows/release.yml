@@ -44,6 +44,11 @@ jobs:
           args: --target=${{ matrix.triple.target }} --release --verbose
           use-cross: ${{ matrix.triple.cross }}
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.triple.os }}-${{ matrix.triple.target }}
+          path: ./target/${{ matrix.triple.target }}/release/rust_ci
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
@@ -67,6 +72,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.triple.os }}-${{ matrix.triple.target }}
+
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Build and push
         id: docker_build
