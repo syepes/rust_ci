@@ -9,53 +9,36 @@ env:
 
 jobs:
   build:
-    name: ${{ matrix.toolchain }} / ${{ matrix.triple.target }}
-    runs-on: ${{ matrix.triple.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        toolchain: [nightly]
-        triple:
-          - {os: "ubuntu-latest", target: "x86_64-unknown-linux-gnu", cross: false}
-          - {os: "ubuntu-latest", target: "armv7-unknown-linux-gnueabihf", cross: true}
-          # - {os: "ubuntu-latest", target: "aarch64-unknown-linux-gnu", cross: true}
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ matrix.toolchain }}
-          target: ${{ matrix.triple.target }}
-          override: true
-
       - name: Fetch
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1.0.1
         with:
           command: fetch
 
-      - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target=${{ matrix.triple.target }} --release --verbose
-          use-cross: ${{ matrix.triple.cross }}
-
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v1.0.1
         with:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v1.1.1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2.1.4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v1.8.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -65,7 +48,7 @@ jobs:
 
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@2.3.0
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .

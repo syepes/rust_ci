@@ -1,10 +1,18 @@
-FROM ubuntu:latest
-ARG arch
+FROM --platform=$BUILDPLATFORM rust:latest as builder
+WORKDIR /app
 
-ADD target/$arch/release/rust_ci /rust_ci
-# ADD rust_ci /rust_ci
+RUN cargo install cargo-build-deps
 
-WORKDIR /
+COPY ./Cargo.toml .
+COPY ./Cargo.lock .
+COPY ./src src
+
+RUN cargo build-deps --release --verbose
+RUN cargo build --release --verbose
+
+FROM debian:buster-slim
+
+COPY --from=builder /app/target/release/rust_ci /rust_ci
 
 ENV RUST_BACKTRACE=true
-CMD ["/rust_ci"]
+ENTRYPOINT ["/rust_ci"]
