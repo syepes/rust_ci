@@ -1,6 +1,7 @@
 FROM ubuntu:latest
+ARG arch
 
-ADD target/*/release/rust_ci /rust_ci
+ADD target/$arch/release/rust_ci /rust_ci
 # ADD rust_ci /rust_ci
 
 WORKDIR /
