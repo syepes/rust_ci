@@ -8,6 +8,10 @@ license = "Apache-2.0"
 edition = "2018"
 include = ["src/*.rs", "*.md", "LICENSE", "README"]
 
+
+[[bin]]
+name = "rust_ci"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
