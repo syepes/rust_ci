@@ -1,4 +1,6 @@
 FROM --platform=$BUILDPLATFORM rust:latest as builder
+ARG BUILDPLATFORM
+ARG TARGETPLATFORM
 RUN echo "Running on: $BUILDPLATFORM / Building for $TARGETPLATFORM"
 WORKDIR /app
 
