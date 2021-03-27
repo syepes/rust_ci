@@ -57,9 +57,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-${{ matrix.triple.target }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.triple.target }}-buildx-
+            ${{ runner.os }}-buildx-
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
@@ -77,7 +77,7 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.prep.outputs.tags }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rust_ci:${{ steps.prep.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
