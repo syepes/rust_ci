@@ -7,7 +7,7 @@ COPY ./Cargo.toml .
 COPY ./Cargo.lock .
 COPY ./src src
 
-RUN cargo build-deps --release --verbose
+RUN cargo build-deps --release
 RUN cargo build --release --verbose
 
 FROM debian:buster-slim
