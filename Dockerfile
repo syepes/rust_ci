@@ -1,4 +1,5 @@
 FROM --platform=$BUILDPLATFORM rust:latest as builder
+RUN echo "Running on: $BUILDPLATFORM / Building for $TARGETPLATFORM"
 WORKDIR /app
 
 COPY ./Cargo.toml .
@@ -7,7 +8,7 @@ COPY ./src src
 
 RUN cargo build --release --verbose
 
-FROM debian:buster-slim
+FROM --platform=$BUILDPLATFORM debian:buster-slim
 
 COPY --from=builder /app/target/release/rust_ci /rust_ci
 
