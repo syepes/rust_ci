@@ -1,2 +1,13 @@
-/target
+.idea
+*.iml
+.vscode
+*.swp
+*~
+**/.DS_Store
+*.local
+*.local.*
 temp/
+logs/
+**/*.rs.bk
+/target
+/target/
