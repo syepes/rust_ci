@@ -1,0 +1,7 @@
+{
+  "numActiveSessions": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "num_active_sessions"
+  }
+}
