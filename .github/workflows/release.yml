@@ -25,12 +25,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Compile and release
-        uses: rust-build/rust-build.action@latest
+      - name: Build project
+        run: cargo build --release --locked
+      - name: Bump version and push tag/create release point
+        uses: anothrNick/github-tag-action@1.35.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUSTTARGET: ${{ matrix.triple.target }}
-          EXTRA_FILES: "cfg/dev.json"
+          WITH_V: true
+        id: bump_version
+      - name: Upload binary to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/rust_ci
+          asset_name: linux-${{ matrix.triple.target }}
+          tag: ${{ steps.bump_version.outputs.new_tag }}
+          overwrite: true
       # - name: Install toolchain
       #   uses: actions-rs/toolchain@v1
       #   with:
