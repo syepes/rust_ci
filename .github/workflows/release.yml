@@ -30,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUSTTARGET: ${{ matrix.triple.target }}
-          EXTRA_FILES: "cfg"
+          EXTRA_FILES: "cfg/dev.json"
       # - name: Install toolchain
       #   uses: actions-rs/toolchain@v1
       #   with:
