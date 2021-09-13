@@ -16,10 +16,10 @@ jobs:
       matrix:
         toolchain: [nightly]
         triple:
-          - {os: "ubuntu-latest", target: "x86_64-unknown-linux-musl", cross: false}
-          # - {os: "ubuntu-latest", target: "x86_64-unknown-linux-gnu", cross: false}
+          #- {os: "ubuntu-latest", target: "x86_64-unknown-linux-musl", cross: false}
+          - {os: "ubuntu-latest", target: "x86_64-unknown-linux-gnu", cross: false}
           # - {os: "ubuntu-latest", target: "armv7-unknown-linux-gnueabihf", cross: true}
-          # - {os: "ubuntu-latest", target: "aarch64-unknown-linux-gnu", cross: true}
+          - {os: "ubuntu-latest", target: "aarch64-unknown-linux-gnu", cross: true}
 
     steps:
       - name: Checkout
@@ -27,12 +27,14 @@ jobs:
 
       - name: Build project
         run: cargo build --release --locked
+
       - name: Bump version and push tag/create release point
-        uses: anothrNick/github-tag-action@1.35.0
+        uses: anothrNick/github-tag-action@1.36.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
         id: bump_version
+
       - name: Upload binary to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -41,6 +43,19 @@ jobs:
           asset_name: linux-${{ matrix.triple.target }}
           tag: ${{ steps.bump_version.outputs.new_tag }}
           overwrite: true
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/rust_ci
+        asset_name: linux-${{ matrix.triple.target }}
+        tag: ${{ steps.bump_version.outputs.new_tag }}
+        overwrite: true
+        body: "This is my release text"
+
+
+
       # - name: Install toolchain
       #   uses: actions-rs/toolchain@v1
       #   with:
