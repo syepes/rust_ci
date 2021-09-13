@@ -35,7 +35,7 @@ jobs:
           WITH_V: true
         id: bump_version
 
-      - name: Upload binary to release
+      - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -43,20 +43,7 @@ jobs:
           asset_name: linux-${{ matrix.triple.target }}
           tag: ${{ steps.bump_version.outputs.new_tag }}
           overwrite: true
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/release/rust_ci
-        asset_name: linux-${{ matrix.triple.target }}
-        tag: ${{ steps.bump_version.outputs.new_tag }}
-        overwrite: true
-        body: "This is my release text"
-
-
-
-      # - name: Install toolchain
+          # - name: Install toolchain
       #   uses: actions-rs/toolchain@v1
       #   with:
       #     profile: minimal
